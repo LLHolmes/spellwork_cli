@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
-require "../lib/environment.rb"
+require_relative "../lib/environment.rb"
 
 SpellworkCli::CLI.new.start

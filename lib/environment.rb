@@ -1,6 +1,7 @@
 require_relative "./spellwork_cli/version.rb"
+require_relative "./spellwork_cli/cli.rb"
 
-module SpellworkCli
-  class Error < StandardError; end
-  # Your code goes here...
-end
+# module SpellworkCli
+#   class Error < StandardError; end
+#   # Your code goes here...
+# end
