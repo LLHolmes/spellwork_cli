@@ -2,6 +2,19 @@ class SpellworkCli::Spell
   attr_accessor :name, :type, :description, :url, :effect, :light, :incantation, :hand_motion #, :creator, :practitioners
 
   @@all = []
+  # Scrape website and return Spells based on that info
+
+  # def initialize(name, type, description, url)
+  #   @name = name
+  #   @type = type
+  #   @description = description
+  #   @url = url
+  #   @@all << self
+  # end
+
+  def self.all
+    @@all
+  end
 
   def self.types
     # returns an array of unique types of all spells
