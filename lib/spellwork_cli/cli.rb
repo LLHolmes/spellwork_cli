@@ -2,22 +2,17 @@ class SpellworkCli::CLI
 
 def start
   puts "Welcome to Spellwork, where you can learn to cast known Harry Potter spells!"
-  puts "Types of spells:"
-  # list_spell_types
   choose_spell_type
   goodbye
 end
 
-def list_spell_types#(spell_types)
-  # spell_types = ["Transfiguration", "Charm", "Dark Charm (Curses, hexes, and jinxes)", "Counter-Spell", "Healing Spells", "Spell"]
-  # @spell.types = SpellworkCli::Spell.types
+def list_spell_types
+  puts "Types of spells:"
   SpellworkCli::Spell.types.each.with_index(1) { |type, i| puts "#{i}. #{type}" }
 end
 
 def choose_spell_type
-  # spell_types = ["Transfiguration", "Charm", "Dark Charm (Curses, hexes, and jinxes)", "Counter-Spell", "Healing Spells", "Spell"]
-  # @spell.types = SpellworkCli::Spell.types
-  list_spell_types#(spell_types)
+  list_spell_types
   input = nil
   while input != "exit"
     puts "Enter the number for a selection of specific spells of that kind, \"list\" for the list of types, or \"exit\":"
@@ -27,7 +22,7 @@ def choose_spell_type
         choose_spell("#{SpellworkCli::Spell.types[input.to_i-1]}")
   # DON'T WANT THIS IN A WHILE LOOP????
       elsif input == "list"
-        list_spell_types#(spell_types)
+        list_spell_types
       # elsif input == "all"
       #   puts 'There are x known spells.  Would you still like a list of them all? y/n'
       #   choice = gets.chomp.downcase
@@ -41,25 +36,19 @@ def choose_spell_type
 end
 
 def list_spells_of_a_type(type)
-  # spells_of_type = ["Alohamorra", "Accio", "Wingardium Leviosa"]
-  # @spells_of_type = SpellworkCli::Spell.list_by_type(type)
+  puts "All #{type.downcase} spells:"
   SpellworkCli::Spell.list_by_type(type).each.with_index(1) { |spell, i| puts "#{i}. #{spell}" }
-  # spells_of_type.each.with_index(1) { |type, i| puts "#{i}. #{type}" }
 end
 
 def choose_spell(type)
-  puts type
-  # spells_of_type = ["Alohamorra", "Accio", "Wingardium Leviosa"]
-  # @spells_of_type = SpellworkCli::Spell.list_by_type(type)
   list_spells_of_a_type(type)
-  # list objects of a specific type
-  # accept user input
   input = nil
   while input != "exit"
-    puts "Enter the number for more information on a spell, \"list\" for the list of #{type.downcase} spells, or \"exit\":"
+    puts "Enter the number of a spell to learn about casting it, \"list\" for the list of #{type.downcase} spells, or \"exit\":"
     input = gets.chomp.downcase
     if input != "exit"
       if input.to_i > 0 && input.to_i <= SpellworkCli::Spell.list_by_type(type).length
+        # SpellworkCli::Spell.casting_info(name)
         puts "more on #{SpellworkCli::Spell.list_by_type(type)[input.to_i-1]}"
   # DON'T WANT THIS IN A WHILE LOOP????
       elsif input == "list"
