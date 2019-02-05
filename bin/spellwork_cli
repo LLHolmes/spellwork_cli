@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require "../lib/environment.rb"
+
+SpellworkCli::CLI.new.start
