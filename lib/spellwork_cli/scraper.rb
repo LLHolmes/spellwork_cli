@@ -5,9 +5,6 @@ class SpellworkCli::Scraper
     doc = Nokogiri::HTML(html)
 
     doc.css('h3 .mw-headline').each.with_index do |element, i|
-      array = []
-      hash = {}
-
       # Scrape name - some names listed ()
       element.text[0] == "(" ? name = element.text[1...-1] : name = element.text
       name = element.text
@@ -19,21 +16,33 @@ class SpellworkCli::Scraper
         url = "https://harrypotter.fandom.com" + element.css('a').attr('href').text
       end
 
-      # Scrape type & description
-      array = doc.css('dl')[i].css('dd').text.split("\n")
-        # array << list_item.text.split("\n")
-      # end
-      array.each do|item|
-        hash[item.split(": ")[0]] = item.split(": ")[1]
+      # Scrape type & desc. - 1. find correct dd
+      attributes = nil
+      detail_array = []
+      detail_hash = {}
+      if element.parent.next_element.css('dd')[1]
+        attributes = element.parent.next_element.css('dd')
+      elsif element.parent.next_element.next_element.css('dd')[1]
+        attributes = element.parent.next_element.next_element.css('dd')
+      else
+        attributes = element.parent.next_element.next_element.next_element.css('dd')
       end
-      type = hash["Type"]
-      description = hash["Description"]
+      # Scrape type & desc. - 2. make array of dd text elements, then split them into a hash
+      attributes.each do |list_item|
+        detail_array << list_item.text.strip
+      end
+      # Scrape type & desc. - 3. split array items into key/value pairs and add to hash
+      detail_array.each do|item|
+        detail_hash[item.split(": ")[0]] = item.split(": ")[1]
+      end
+      type = detail_hash["Type"]
+      description = detail_hash["Description"]
 
-      # Create new instance for each element
       SpellworkCli::Spell.new(name, type, description, url)
     end
     # WILL NEED TYPE TO DEFAULT TO "SPELL" IF NONE GIVEN.
     # WILL NEED TO CLEAN UP TYPE IF MORE THAN ONE GIVEN.
+    "Encyclopedia loaded!"
   end
 
   def self.scrape_details(spell, url)
