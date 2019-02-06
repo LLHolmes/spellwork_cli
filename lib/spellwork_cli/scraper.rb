@@ -20,11 +20,11 @@ class SpellworkCli::Scraper
       end
 
       # Scrape type & description
-      doc.css('h3 + dl')[i].css('dd').each do |list_item|
-        array << list_item.text
-      end
+      array = doc.css('dl')[i].css('dd').text.split("\n")
+        # array << list_item.text.split("\n")
+      # end
       array.each do|item|
-        hash[item.strip.split(": ")[0]] = item.strip.split(": ")[1]
+        hash[item.split(": ")[0]] = item.split(": ")[1]
       end
       type = hash["Type"]
       description = hash["Description"]
