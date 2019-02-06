@@ -4,16 +4,22 @@ class SpellworkCli::Scraper
     html = open('https://harrypotter.fandom.com/wiki/List_of_spells')
     doc = Nokogiri::HTML(html)
 
-
     doc.css('h3 .mw-headline').each.with_index do |element, i|
       array = []
       hash = {}
 
-
+      # Scrape name - some names listed ()
+      element.text[0] == "(" ? name = element.text[1...-1] : name = element.text
       name = element.text
-      #=> "Accio (Summoning Charm)"
-      url = "https://harrypotter.fandom.com" + element.css('a').attr('href').text
-      #=> "/wiki/Summoning_Charm"
+
+      # Scrape url
+      if element.css('a').attr('href') == nil
+        url = nil
+      else
+        url = "https://harrypotter.fandom.com" + element.css('a').attr('href').text
+      end
+
+      # Scrape type & description
       doc.css('h3 + dl')[i].css('dd').each do |list_item|
         array << list_item.text
       end
@@ -23,49 +29,32 @@ class SpellworkCli::Scraper
       type = hash["Type"]
       description = hash["Description"]
 
-      binding.pry
-
+      # Create new instance for each element
+      SpellworkCli::Spell.new(name, type, description, url)
     end
-    # name = doc.css('h3 .mw-headline')[1].text
-    # url = doc.css('h3 .mw-headline')[1].css('i a').attr('href').text
-    # doc.css('h3 + dl').first.css('dd').first.text
-      # => "Type: Charm\n"
-      # => "Pronunciation: Ah-bare-toh\n"
-      # => "Description: A spell presumably used to open objects such as doors or windows. \n"
-
-
-    # monster_elements = doc.css('ul.colum li ul li a;')
-
-    # Go to index page
-    # Scrape name
-    # Scrape type
-    # Scrape description
-    # Scrape url
-
-  # monster_elements.each do |monster_element|
-  # 	monster = Monster.new
-  # 	monster.name = monster_element.text
-  # 	monster.url = “http://www.d20srd.org” + monster_element.attr('href')
-  # 	doc = Nokogiri::HTML(open(monster.url))		#nests scraping to get a detail off the individual monster page
-  # 	monster.challenge_rating = doc.css(“table tr td”)[34]
-  # end
+    # WILL NEED TYPE TO DEFAULT TO "SPELL" IF NONE GIVEN.
+    # WILL NEED TO CLEAN UP TYPE IF MORE THAN ONE GIVEN.
   end
 
-  def self.scrape_details(spell)
+  def self.scrape_details(spell, url)
+    html = open(url)
+    doc = Nokogiri::HTML(html)
+
+    attributes = {}
+
+    doc.css('.pi-data').each do |element|
+      attributes[element.('.pi-data-label').text] = element.('.pi_data-value').text
+    end
+
+    spell.add_details(attributes)
     # Go to specific spell page
-    # Scrape incantation
+    # Scrape incantation (if applicable)
     # Scrape hand_motion (if applicable)
     # Scrape effect
-    # Scrape light
+    # Scrape light (if applicable)
 
-    # Possibly scrape creator
-    # Possibly scrape practitioners
+    # Possibly scrape creator (if applicable)
+    # Possibly scrape practitioners (if applicable)
   end
 
 end
-
-
-# spells have:
-#  :name, :type, :description, :url, :effect, :light, :incantation, :hand_motion
-# spells possibly have:
-# :creator, :practitioners
