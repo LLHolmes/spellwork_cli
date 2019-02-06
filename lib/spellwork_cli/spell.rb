@@ -40,6 +40,8 @@ class SpellworkCli::Spell
     attributes.each do |key, value|
       if key == "type"
         @subtype = value
+      elsif key == "hand_movement" && value == ""
+        @hand_movement = nil
       else
         self.send(("#{key}="), value)
       end
@@ -47,15 +49,37 @@ class SpellworkCli::Spell
   end
 
   def list_additional_details
-    puts self.name
-    puts self.type
-    puts self.url
-    puts self.description
-    puts self.subtype
-    puts self.light
-    puts self.incantation
-    puts self.effect
-    puts self.hand_movement
+    if self.type != self.subtype && self.subtype
+      puts "#{self.name} is a #{self.subtype.downcase} form of a #{self.type.downcase} spell that #{self.effect.downcase}."
+    else
+      puts "#{self.name} is a #{self.type.downcase} spell that #{self.effect.downcase}."
+    end
+
+    if self.description != nil
+      puts "  #{self.description}"
+    end
+
+    if self.incantation && self.hand_movement
+      puts "  To use the spell, #{self.hand_movement.downcase} and say the incantation: #{self.incantation.gsub("(", " (")}."
+    elsif self.incantation
+      puts "  To use the spell, say the incantation: #{self.incantation.gsub("(", " (")}."
+    elsif self.hand_movement
+      puts "  To use the spell, #{self.hand_movement.downcase}."
+    end
+
+    if self.light == "None"
+      puts "  It will produce no light."
+    elsif self.light != nil
+      puts "  It will produce #{self.light.downcase} light."
+    end
+    # puts self.type
+    # puts self.url
+    # puts self.description
+    # puts self.subtype
+    # puts self.light
+    # puts self.incantation
+    # puts self.effect
+    # puts self.hand_movement
   end
 
   def self.all
@@ -84,14 +108,14 @@ class SpellworkCli::Spell
     self.all.detect { |spell| spell if spell.name == name }
   end
 
-  def self.request_info_by_name(name)
-    # adds casting information for a spell with a given name & returns spell
-    requested_spell = self.find_by_name(name)
-    spell_url = requested_spell.url
-  # NEED FIX IF NO URL AVAILABLE
-    SpellworkCli::Scraper.scrape_details(requested_spell, spell_url)
-    requested_spell
-  end
+  # def self.request_info_by_name(name)
+  #   # adds casting information for a spell with a given name & returns spell
+  #   requested_spell = self.find_by_name(name)
+  #   spell_url = requested_spell.url
+  # # NEED FIX IF NO URL AVAILABLE
+  #   SpellworkCli::Scraper.scrape_details(requested_spell, spell_url)
+  #   requested_spell
+  # end
 
 end
 
