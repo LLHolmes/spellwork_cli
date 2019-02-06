@@ -7,7 +7,6 @@ class SpellworkCli::Scraper
     doc.css('h3 .mw-headline').each.with_index do |element, i|
       # Scrape name - some names listed ()
       element.text[0] == "(" ? name = element.text[1...-1] : name = element.text
-      name = element.text
 
       # Scrape url
       if element.css('a').attr('href') == nil
@@ -38,6 +37,54 @@ class SpellworkCli::Scraper
       type = detail_hash["Type"]
       description = detail_hash["Description"]
 
+      # Type & desc. special cases
+      if type == nil && description == nil
+        # homing spells
+        if element.parent.next_element.css('dd')[0]
+          attributes = element.parent.next_element.css('dd')
+          attributes.each do |list_item|
+            detail_array << list_item.text.strip
+          end
+          detail_array.each do|item|
+            detail_hash[item.split(": ")[0]] = item.split(": ")[1]
+          end
+          type ||= detail_hash["Type"]
+          description ||= detail_hash["Description"]
+        # legilimens
+        elsif element.parent.next_element.next_element.css('dd')[0]
+          attributes = element.parent.next_element.next_element.css('dd')
+          attributes.each do |list_item|
+            detail_array << list_item.text.strip
+          end
+          detail_array.each do|item|
+            detail_hash[item.split(": ")[0]] = item.split(": ")[1]
+          end
+          type ||= detail_hash["Type"]
+          description ||= detail_hash["Description"]
+          if type == nil || description == nil && element.parent.next_element.next_element.next_element.css('dd')[0]
+            attributes = element.parent.next_element.next_element.next_element.css('dd')
+            attributes.each do |list_item|
+              detail_array << list_item.text.strip
+            end
+            detail_array.each do|item|
+              detail_hash[item.split(": ")[0]] = item.split(": ")[1]
+            end
+            type ||= detail_hash["Type"]
+            description ||= detail_hash["Description"]
+          elsif type == nil || description == nil && element.parent.next_element.next_element.next_element.next_element.css('dd')[0]
+            attributes = element.parent.next_element.next_element.next_element.next_element.css('dd')
+            attributes.each do |list_item|
+              detail_array << list_item.text.strip
+            end
+            detail_array.each do|item|
+              detail_hash[item.split(": ")[0]] = item.split(": ")[1]
+            end
+            type ||= detail_hash["Type"]
+            description ||= detail_hash["Description"]
+          end
+        end
+      end
+
       SpellworkCli::Spell.new(name, type, description, url)
     end
     # WILL NEED TYPE TO DEFAULT TO "SPELL" IF NONE GIVEN.
@@ -45,17 +92,20 @@ class SpellworkCli::Scraper
     "Encyclopedia loaded!"
   end
 
-  def self.scrape_details(spell, url)
+  def self.scrape_details(url)
     html = open(url)
     doc = Nokogiri::HTML(html)
 
     attributes = {}
 
-    doc.css('.pi-data').each do |element|
-      attributes[element.('.pi-data-label').text] = element.('.pi_data-value').text
+    doc.css('.pi-data').css('.pi-data-label').each.with_index do |element, i|
+      attributes[element.text.downcase.gsub(" ", "_")] = doc.css('.pi-data').css('.pi-data-value')[i].text.gsub(/\[.*\]/, "")
     end
 
-    spell.add_details(attributes)
+    puts attributes
+    attributes
+    # spell.add_details(attributes)
+
     # Go to specific spell page
     # Scrape incantation (if applicable)
     # Scrape hand_motion (if applicable)

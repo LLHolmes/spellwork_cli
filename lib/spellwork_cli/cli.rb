@@ -3,21 +3,29 @@ class SpellworkCli::CLI
 def start
   puts "Welcome to Spellwork, where you can learn to cast known Harry Potter spells!"
   build_encyclopedia
+  menu
   choose_spell_type
   goodbye
 end
 
 def build_encyclopedia
-  # Scrapes site & creates new Spell instances which are collected in @@all
   SpellworkCli::Scraper.scrape_fandom_wiki_index
-    # students_array = Scraper.scrape_index_page(BASE_PATH + 'index.html')
-    # Student.create_from_collection(students_array)
+end
+
+def menu
+  <<~HEREDOC
+  Enter the number of how would you like to select a spell:
+  1. By the name of a specific spell.
+  2. By the type of spell.
+  3. By searching the encyclopedia alphabetically.
+  HEREDOC
 end
 
 def list_spell_types
   @types = SpellworkCli::Spell.types
   puts "Types of spells:"
   @types.each.with_index(1) { |type, i| puts "#{i}. #{type}" }
+  ""
 end
 
 def choose_spell_type
@@ -32,11 +40,7 @@ def choose_spell_type
   # DO I WANT THIS IN A WHILE LOOP????
       elsif input == "list"
         list_spell_types
-      # elsif input == "all"
-      #   puts 'There are x known spells.  Would you still like a list of them all? y/n'
-      #   choice = gets.chomp.downcase
-      #     if choice == "y"
-      #       puts 'LIST OF ALL SPELLS'
+
       else
         puts "I'm not sure what you mean. Please try again."
       end
@@ -45,9 +49,10 @@ def choose_spell_type
 end
 
 def list_spells_of_a_type(type)
-  @spells_by_type = SpellworkCli::Spell.list_name_by_type(type)
+  @spells_by_type = SpellworkCli::Spell.find_by_type(type)
   puts "All #{type.downcase} spells:"
-  @spells_by_type.each.with_index(1) { |spell, i| puts "#{i}. #{spell}" }
+  @spells_by_type.each.with_index(1) { |spell, i| puts "#{i}. #{spell.name}" }
+  ""
 end
 
 def choose_spell(type)
@@ -58,8 +63,8 @@ def choose_spell(type)
     input = gets.chomp.downcase
     if input != "exit"
       if input.to_i > 0 && input.to_i <= @spells_by_type.length
-        # requested_spell = SpellworkCli::Spell.request_info_by_name(@spells_by_type[input.to_i-1])
-        # list_details(requested_spell)
+        @requested_spell = SpellworkCli::Spell.request_info_by_spell(@spells_by_type[input.to_i-1])
+        # list_details(@requested_spell)
         puts "more on #{@spells_by_type[input.to_i-1]}"
   # DO I WANT THIS IN A WHILE LOOP????
       elsif input == "list"

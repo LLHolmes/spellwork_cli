@@ -1,19 +1,61 @@
 class SpellworkCli::Spell
-  attr_accessor :name, :type, :description, :url, :effect, :light, :incantation, :hand_motion #, :creator, :practitioners
+  attr_accessor :name, :type, :description, :url, :subtype, :effect, :light, :incantation, :hand_movement #, :creator, :practitioners
 
   @@all = []
   # Scrape website and return Spells based on that info
 
   def initialize(name, type, description, url)
     @name = name
-    @type = type
+    @type = classify_type(type, name)
     @description = description
     @url = url
     @@all << self
   end
 
+  def classify_type(type, name)
+    if type
+      if type.include?("Healing")
+        "Healing Spell"
+      elsif type.include?("Counter") || type.include?("Untransfiguration")
+        "Counter-Spell"
+      elsif type.include?("Curse") || type == "Hex" || type == "Jinx"
+        "Dark Charm"
+      elsif type.include?("Transfiguration") || type.include?("Conjuration")
+        "Transfiguration"
+      elsif type == "Charm"
+        "Charm"
+      else
+        "Spell"
+      end
+    elsif name == "Cornflake skin spell"
+      "Dark Charm"
+    elsif name == "Green Sparks" || name == "Morsmordre(Dark Mark)"
+      "Transfiguration"
+    else
+      "Spell"
+    end
+  end
+
   def add_details(attributes)
-    attributes.each {|key, value| self.send(("#{key}="), value)}
+    attributes.each do |key, value|
+      if key == "type"
+        @subtype = value
+      else
+        self.send(("#{key}="), value)
+      end
+    end
+  end
+
+  def list_additional_details
+    puts self.name
+    puts self.type
+    puts self.url
+    puts self.description
+    puts self.subtype
+    puts self.light
+    puts self.incantation
+    puts self.effect
+    puts self.hand_movement
   end
 
   def self.all
@@ -29,15 +71,14 @@ class SpellworkCli::Spell
     self.all.select { |spell| spell if spell.type == type }
   end
 
-  def self.list_name_by_type(type)
-    # returns an array of all spells with a specific type
-    self.find_by_type.collect { |item| item.name }.sort
+  def self.request_info_by_spell(spell)
+    # adds casting information for a spell with a given name & returns spell
+    # requested_spell = spell
+  # NEED FIX IF NO URL AVAILABLE
+    # url = spell.url
+    spell.add_details(SpellworkCli::Scraper.scrape_details(spell.url))
+    spell.list_additional_details
   end
-
-  # def self.details_from_type_list(index)
-  #   # returns casting information for the spell from the type list with the given index?????
-  #   # VS HAVING TO CHANGE INDEX TO NAME FOR CASTING_INFO(NAME)????
-  # end
 
   def self.find_by_name(name)
     self.all.detect { |spell| spell if spell.name == name }
