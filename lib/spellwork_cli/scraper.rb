@@ -30,7 +30,7 @@ class SpellworkCli::Scraper
       attributes.each do |list_item|
         detail_array << list_item.text.strip
       end
-      # Scrape type & desc. - 3. split array items into key/value pairs and add to hash
+      # Scrape type & desc. - 3. split array items into key/value pairs and add to hash to save
       detail_array.each do|item|
         detail_hash[item.split(": ")[0]] = item.split(": ")[1]
       end
@@ -84,11 +84,8 @@ class SpellworkCli::Scraper
           end
         end
       end
-
       SpellworkCli::Spell.new(name, type, description, url)
     end
-    # WILL NEED TYPE TO DEFAULT TO "SPELL" IF NONE GIVEN.
-    # WILL NEED TO CLEAN UP TYPE IF MORE THAN ONE GIVEN.
     "Encyclopedia loaded!"
   end
 
@@ -102,18 +99,7 @@ class SpellworkCli::Scraper
       attributes[element.text.downcase.gsub(" ", "_")] = doc.css('.pi-data').css('.pi-data-value')[i].text.gsub(/\[.*\]/, "")
     end
 
-    puts attributes
     attributes
-    # spell.add_details(attributes)
-
-    # Go to specific spell page
-    # Scrape incantation (if applicable)
-    # Scrape hand_motion (if applicable)
-    # Scrape effect
-    # Scrape light (if applicable)
-
-    # Possibly scrape creator (if applicable)
-    # Possibly scrape practitioners (if applicable)
   end
 
 end
