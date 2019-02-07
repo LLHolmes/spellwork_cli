@@ -107,7 +107,7 @@ class SpellworkCli::Spell
 
   def self.find_in_encyclopedia(letter)
     # returns an array of spells of a specific type
-    self.all.select { |spell| spell if spell.name.start_with?(letter) }
+    self.all.select { |spell| spell if spell.name.downcase.start_with?(letter) }
   end
 
   def self.request_info_by_spell(spell)
