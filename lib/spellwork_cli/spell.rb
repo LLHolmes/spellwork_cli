@@ -105,6 +105,11 @@ class SpellworkCli::Spell
     self.all.select { |spell| spell if spell.type == type }
   end
 
+  def self.find_in_encyclopedia(letter)
+    # returns an array of spells of a specific type
+    self.all.select { |spell| spell if spell.name.start_with?(letter) }
+  end
+
   def self.request_info_by_spell(spell)
     # adds additional information for a spell with a given name
     if spell.url == nil || spell.effect
