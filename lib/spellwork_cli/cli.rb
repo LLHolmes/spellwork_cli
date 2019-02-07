@@ -1,87 +1,160 @@
 class SpellworkCli::CLI
 
-def start
-  puts "Welcome to Spellwork, where you can learn to cast known Harry Potter spells!"
-  build_encyclopedia
-  menu
-  choose_spell_type
-  goodbye
-end
+  def initialize
+    @input = "menu!"
+  end
 
-def build_encyclopedia
-  SpellworkCli::Scraper.scrape_fandom_wiki_index
-end
+  def start
+    puts <<~HEREDOC
+                             *  *
+              ..           *   * *
+           .       .       . *  *
+        _.            ..      *
+       //
+      //        Welcome to Spellwork!
+     //
+    // A collection of known Harry Potter spells.
+    -
 
-def menu
-  <<~HEREDOC
-  Enter the number of how would you like to select a spell:
-  1. By the name of a specific spell.
-  2. By the type of spell.
-  3. By searching the encyclopedia alphabetically.
-  HEREDOC
-end
+    HEREDOC
+    # "Welcome to Spellwork, where you can learn to cast known Harry Potter spells!"
+    build_encyclopedia
+    run_program
+    # menu
+    # choose_spell_type
+    goodbye
+  end
 
-def list_spell_types
-  @types = SpellworkCli::Spell.types
-  puts "Types of spells:"
-  @types.each.with_index(1) { |type, i| puts "#{i}. #{type}" }
-  ""
-end
+  def build_encyclopedia
+    SpellworkCli::Scraper.scrape_fandom_wiki_index
+  end
 
-def choose_spell_type
-  list_spell_types
-  input = nil
-  while input != "exit"
-    puts "Enter the number for a selection of specific spells of that kind, \"list\" for the list of types, or \"exit\":"
-    input = gets.chomp.downcase
-    if input != "exit"
-      if input.to_i > 0 && input.to_i <= @types.length
-        choose_spell("#{@types[input.to_i-1]}")
-  # DO I WANT THIS IN A WHILE LOOP????
-      elsif input == "list"
-        list_spell_types
+  def run_program
+    while @input != "exit!"
+      if @input == "menu!"
+        menu
+      elsif @input == "word"
 
+      elsif @input == "type"
+        choose_spell_type
+      elsif @input == "search"
+        search_by_letter
+      end
+    end
+    goodbye
+  end
+
+  def menu
+    puts <<~HEREDOC
+    How would you like to select a spell to learn about?
+    Enter "word" to use a keyword or name of a spell.
+    Enter "type" to chose from a list of spell types.
+    Enter "search" to look through the encyclopedia alphabetically.
+    To leave the program at any time, type "exit!".
+    HEREDOC
+    @input = gets.chomp.downcase
+    if @input != "word" || @input != "type" || @input != "search" || @input != "exit!"
+      puts "I'm not sure what you mean. Please enter \"word\", \"type\", \"search\",or \"exit!\""
+    end
+  end
+
+  def search_by_letter
+    list_spell_types
+    while @input != "menu!" || @input != "exit!"
+      puts "Enter a number to list spells of that kind:"
+      puts "(Enter \"list\" for the list of spell types, \"menu!\" for the main menu, or \"exit!\" to leave the program.)"
+      input = gets.chomp.downcase
+      if input != "menu!" || input != "exit!"
+        if input.to_i > 0 && input.to_i <= @types.length
+          choose_spell_from_type("#{@types[input.to_i-1]}")
+        elsif input == "list"
+          list_spell_types
+        else
+          puts "I'm not sure what you mean. Please try again."
+        end
       else
-        puts "I'm not sure what you mean. Please try again."
+        @input = input
       end
     end
   end
-end
-
-def list_spells_of_a_type(type)
-  @spells_by_type = SpellworkCli::Spell.find_by_type(type)
-  puts "All #{type.downcase} spells:"
-  @spells_by_type.each.with_index(1) { |spell, i| puts "#{i}. #{spell.name}" }
-  ""
-end
-
-def choose_spell(type)
-  list_spells_of_a_type(type)
-  input = nil
-  while input != "exit"
-    puts "Enter the number of a spell to learn about casting it, \"list\" for the list of #{type.downcase} spells, or \"exit\":"
-    input = gets.chomp.downcase
-    if input != "exit"
-      if input.to_i > 0 && input.to_i <= @spells_by_type.length
-        @requested_spell = SpellworkCli::Spell.request_info_by_spell(@spells_by_type[input.to_i-1])
-        # list_details(@requested_spell)
-        puts "more on #{@spells_by_type[input.to_i-1]}"
-  # DO I WANT THIS IN A WHILE LOOP????
-      elsif input == "list"
-        list_spells_of_a_type(type)
+    list_spell_types
+    while @input != "menu!" || @input != "exit!"
+      puts "Enter a number to list spells of that kind:"
+      puts "(Enter \"list\" for the list of spell types, \"menu!\" for the main menu, or \"exit!\" to leave the program.)"
+      input = gets.chomp.downcase
+      if input != "menu!" || input != "exit!"
+        if input.to_i > 0 && input.to_i <= @types.length
+          choose_spell_from_type("#{@types[input.to_i-1]}")
+        elsif input == "list"
+          list_spell_types
+        else
+          puts "I'm not sure what you mean. Please try again."
+        end
       else
-        puts "I'm not sure what you mean. Please try again."
+        @input = input
       end
     end
   end
-end
 
-def list_details(spell)
-  #puts extra details about spell casting
-end
+  def choose_spell_type
+    list_spell_types
+    while @input != "menu!" || @input != "exit!"
+      puts "Enter a number to list spells of that kind:"
+      puts "(Enter \"list\" for the list of spell types, \"menu!\" for the main menu, or \"exit!\" to leave the program.)"
+      input = gets.chomp.downcase
+      if input != "menu!" || input != "exit!"
+        if input.to_i > 0 && input.to_i <= @types.length
+          choose_spell_from_type("#{@types[input.to_i-1]}")
+        elsif input == "list"
+          list_spell_types
+        else
+          puts "I'm not sure what you mean. Please try again."
+        end
+      else
+        @input = input
+      end
+    end
+  end
 
-def goodbye
-  puts "Goodbye."
-end
+  def list_spell_types
+    @types = SpellworkCli::Spell.types
+    puts "Types of spells:"
+    @types.each.with_index(1) { |type, i| puts "#{i}. #{type}" }
+    puts ""
+  end
+
+  def list_spells_of_a_type(type)
+    @spells_by_type = SpellworkCli::Spell.find_by_type(type)
+    puts "All #{type.downcase} spells:"
+    @spells_by_type.each.with_index(1) { |spell, i| puts "#{i}. #{spell.name}" }
+    puts ""
+  end
+
+  def choose_spell_from_type(type)
+    list_spells_of_a_type(type)
+    while input != "menu!" || input != "exit!"
+      puts "Enter the number of a spell to get more information:"
+      puts "(Enter \"list\" for the list of #{type.downcase} spells, \"type\" for the list of spell types, \"menu!\" for the main menu, or \"exit!\" to leave the program.)"
+      input = gets.chomp.downcase
+      if input != "menu!" || input != "exit!"
+        if input.to_i > 0 && input.to_i <= @types.length
+          choose_spell("#{@types[input.to_i-1]}")
+        elsif input == "list"
+          list_spells_of_a_type(type)
+        elsif input == "type"
+          choose_spell_type
+        else
+          puts "I'm not sure what you mean. Please try again."
+        end
+      else
+        @input = input
+      end
+    end
+  end
+
+  def goodbye
+    puts "Thank you for visiting!"
+    puts "Nox!"
+  end
 
 end
