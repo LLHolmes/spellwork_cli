@@ -51,14 +51,14 @@ class SpellworkCli::Spell
     if self.effect
       if self.type.include?("Spell")
         if self.type != self.subtype && self.subtype
-          puts "#{self.name} is a #{self.subtype.downcase} form of a #{self.type.downcase} spell which #{self.effect.downcase}."
+          puts "\n#{self.name} is a #{self.subtype.downcase} form of a #{self.type.downcase} spell which #{self.effect.downcase}."
         else
-          puts "#{self.name} is a #{self.type.downcase} that #{self.effect.downcase}."
+          puts "\n#{self.name} is a #{self.type.downcase} that #{self.effect.downcase}."
         end
       elsif self.type != self.subtype && self.subtype
-        puts "#{self.name} is a #{self.subtype.downcase} form of a #{self.type.downcase} spell which #{self.effect.downcase}."
+        puts "\n#{self.name} is a #{self.subtype.downcase} form of a #{self.type.downcase} spell which #{self.effect.downcase}."
       else
-        puts "#{self.name} is a #{self.type.downcase} spell that #{self.effect.downcase}."
+        puts "\n#{self.name} is a #{self.type.downcase} spell that #{self.effect.downcase}."
       end
     else
       if self.type.include?("Spell")
