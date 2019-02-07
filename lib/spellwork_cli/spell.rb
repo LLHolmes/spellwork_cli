@@ -1,5 +1,5 @@
 class SpellworkCli::Spell
-  attr_accessor :name, :type, :description, :url, :subtype, :effect, :light, :incantation, :hand_movement #, :creator, :practitioners
+  attr_accessor :name, :type, :description, :url, :subtype, :effect, :light, :incantation, :hand_movement , :creator#, :practitioners
 
   @@all = []
 
@@ -106,13 +106,13 @@ class SpellworkCli::Spell
   end
 
   def self.find_in_encyclopedia(letter)
-    # returns an array of spells of a specific type
+    # returns an array of spells beginning with a specific letter
     self.all.select { |spell| spell if spell.name.downcase.start_with?(letter) }
   end
 
   def self.request_info_by_spell(spell)
-    # adds additional information for a spell with a given name
-    if spell.url == nil || spell.effect
+    # adds additional information for a spell
+    if spell.url == nil || spell.name == ("Horcrux Curse") || spell.effect
       spell.list_additional_details
     else
       spell.add_details(SpellworkCli::Scraper.scrape_details(spell.url))

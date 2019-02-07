@@ -1,6 +1,6 @@
 class SpellworkCli::CLI
 
-  attr_accessor :input
+  # attr_accessor :input
 
   def initialize
     @input = "menu!"
@@ -75,44 +75,45 @@ class SpellworkCli::CLI
         if @input.match(/^[[:alpha:][:blank:]]+$/) == nil
           puts "Please only use letters and try again."
         else
-          puts "valid input"
-          # @spells_by_keyword = SpellworkCli::Spell.search(@input)
-          # if @spells_by_letter == []
-          #   puts "There are no spells that include \"#{input.upcase}\".  Please try again."
-          # elsif @spells_by_letter.length == 1
-            #   self.choose_spell_from_letter(input)
-          # else
-          #
-          # end
+          # puts "valid input"
+          @spells_by_keyword = SpellworkCli::Spell.search(@input)
+          if @spells_by_keyword == []
+            puts "There are no spells that include \"#{@input}\".  Please try again."
+          elsif @spells_by_keyword.length == 1
+            puts "I have found one entry:"
+            SpellworkCli::Spell.request_info_by_spell(@spells_by_keyword[0])
+          else
+            self.choose_spell_from_keyword(@input)
+          end
         end
       end
     end
   end
 
-  # def list_spells_by_letter(letter)
-  #   puts "\nAll spells that begin with the letter #{letter.upcase}:"
-  #   @spells_by_letter.each.with_index(1) { |spell, i| puts "#{i}. #{spell.name}" }
-  # end
-  #
-  # def choose_spell_from_letter(letter)
-  #   self.list_spells_by_letter(letter) unless @input == "exit!"
-  #   while  @input != "menu!" && @input != "exit!"
-  #     puts "\nEnter the number of a spell to get more information:"
-  #     puts "(Enter \"list\" to repeat the list, \"letter\" to search by another letter, \"menu!\" for the main menu, or \"exit!\" to leave the program.)"
-  #     @input = gets.chomp.downcase
-  #     if  @input != "menu!" && @input != "exit!"
-  #       if @input.to_i > 0 && @input.to_i <= @spells_by_letter.length
-  #         SpellworkCli::Spell.request_info_by_spell(@spells_by_letter[@input.to_i-1])
-  #       elsif @input == "list"
-  #         self.list_spells_by_letter(letter)
-  #       elsif @input == "letter"
-  #         self.search_by_letter
-  #       else
-  #         puts "I'm not sure what you mean. Please try again."
-  #       end
-  #     end
-  #   end
-  # end
+  def list_spells_by_keyword(keyword)
+    puts "\nMultiple spells matched your search!:"
+    @spells_by_keyword.each.with_index(1) { |spell, i| puts "#{i}. #{spell.name} - #{spell.description}" }
+  end
+
+  def choose_spell_from_keyword(keyword)
+    self.list_spells_by_keyword(keyword) unless @input == "exit!"
+    while  @input != "menu!" && @input != "exit!"
+      puts "\nEnter the number of a spell to get more information:"
+      puts "(Enter \"list\" to repeat the list, \"word\" to search by another keyword, \"menu!\" for the main menu, or \"exit!\" to leave the program.)"
+      @input = gets.chomp.downcase
+      if  @input != "menu!" && @input != "exit!"
+        if @input.to_i > 0 && @input.to_i <= @spells_by_keyword.length
+          SpellworkCli::Spell.request_info_by_spell(@spells_by_keyword[@input.to_i-1])
+        elsif @input == "list"
+          self.list_spells_by_keyword(keyword)
+        elsif @input == "word"
+          self.search_by_keyword
+        else
+          puts "I'm not sure what you mean. Please try again."
+        end
+      end
+    end
+  end
 
 
 
@@ -157,7 +158,7 @@ class SpellworkCli::CLI
       @input = gets.chomp.downcase
       if  @input != "menu!" && @input != "exit!"
         if @input.to_i > 0 && @input.to_i <= @spells_by_type.length
-          SpellworkCli::Spell.request_info_by_spell(@spells_by_type[input.to_i-1])
+          SpellworkCli::Spell.request_info_by_spell(@spells_by_type[@input.to_i-1])
         elsif @input == "list"
           self.list_spells_of_a_type(type)
         elsif @input == "type"
@@ -178,9 +179,9 @@ class SpellworkCli::CLI
         if ("a".."z").include?(@input)
           @spells_by_letter = SpellworkCli::Spell.find_in_encyclopedia(@input)
           if @spells_by_letter == []
-            puts "There are no spells that begin with the letter #{input.upcase}.  Please choose another."
+            puts "There are no spells that begin with the letter #{@input.upcase}.  Please choose another."
           else
-            self.choose_spell_from_letter(input)
+            self.choose_spell_from_letter(@input)
           end
         else
           puts "I'm not sure what you mean. Please try again."
