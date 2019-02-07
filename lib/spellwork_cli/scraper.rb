@@ -38,6 +38,10 @@ class SpellworkCli::Scraper
       description = detail_hash["Description"]
 
       # Type & desc. special cases
+      if name == "Magicus Extremos"
+        detail_hash[detail_array[1][0..10]] = detail_array[1][13..-1]
+        description ||= detail_hash["Description"]
+      end
       if type == nil && description == nil
         # homing spells
         if element.parent.next_element.css('dd')[0]

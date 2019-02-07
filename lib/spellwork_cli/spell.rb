@@ -120,6 +120,11 @@ class SpellworkCli::Spell
     self.all.detect { |spell| spell if spell.name == name }
   end
 
+  def self.search(word)
+    # returns an array of spells of a specific type
+    self.all.select { |spell| spell if spell.name.downcase.include?(word.downcase) || spell.description.downcase.include?(word.downcase) }
+  end
+
   # def self.request_info_by_name(name)
   #   # adds casting information for a spell with a given name & returns spell
   #   requested_spell = self.find_by_name(name)
