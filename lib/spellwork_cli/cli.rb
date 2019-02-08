@@ -22,17 +22,26 @@ class SpellworkCli::CLI
   end
 
   def welcome
-    puts <<~HEREDOC
-                             *  *
-              ..           *   * *
-           .       .       . *  *
-        _.            ..      *
-       //
-      //        Welcome to Spellwork!
-     //
-    // A collection of known Harry Potter spells.
-    -
-    HEREDOC
+    puts Rainbow("                         *").orange + Rainbow("  *").limegreen
+    puts Rainbow("          ..").dimgray + Rainbow("           *").violet + Rainbow("   *").peru + Rainbow(" *").royalblue
+    puts Rainbow("       .       .       .").dimgray + Rainbow(" *").olive + Rainbow("  *").mediumorchid
+    puts Rainbow("    _").saddlebrown + Rainbow(".            ..").dimgray + Rainbow("      *").cadetblue
+    puts Rainbow("   //").saddlebrown
+    puts Rainbow("  //").saddlebrown + "        Welcome to Spellwork!"
+    puts Rainbow(" //").saddlebrown
+    puts Rainbow("//").saddlebrown + " A collection of known Harry Potter spells."
+    puts Rainbow("-").saddlebrown
+    # puts <<~HEREDOC
+    #                          *  *
+    #           ..           *   * *
+    #        .       .       . *  *
+    #     _.            ..      *
+    #    //
+    #   //        Welcome to Spellwork!
+    #  //
+    # // A collection of known Harry Potter spells.
+    # -
+    # HEREDOC
   end
 
   def build_encyclopedia
@@ -42,9 +51,9 @@ class SpellworkCli::CLI
   def menu
     puts <<~HEREDOC
     \nHow would you like to select a spell to learn about?
-    Enter "word" to use a keyword or name of a spell.
-    Enter "type" to chose from a list of spell types.
-    Enter "search" to look through the encyclopedia alphabetically.
+      Enter "word" to use a keyword or name of a spell.
+      Enter "type" to chose from a list of spell types.
+      Enter "search" to look through the encyclopedia alphabetically.
     To leave the program at any time, type "exit!".
     HEREDOC
     while @input != "word" && @input != "type" && @input != "search" && @input != "exit!"
