@@ -1,5 +1,5 @@
 class SpellworkCli::Spell
-  attr_accessor :name, :type, :description, :url, :subtype, :effect, :light, :incantation, :hand_movement , :creator#, :practitioners
+  attr_accessor :name, :type, :description, :url, :subtype, :effect, :light, :incantation, :hand_movement, :creator
 
   @@all = []
 
@@ -96,23 +96,33 @@ class SpellworkCli::Spell
   end
 
   def self.types
-    # returns an array of unique types of spells
+  # returns an array of unique types of spells
     self.all.collect { |spell| spell.type }.uniq.sort
   end
 
   def self.find_by_type(type)
-    # returns an array of spells of a specific type
+  # returns an array of spells of a specific type
     self.all.select { |spell| spell if spell.type == type }
   end
 
   def self.find_in_encyclopedia(letter)
-    # returns an array of spells beginning with a specific letter
+  # returns an array of spells beginning with a specific letter
     self.all.select { |spell| spell if spell.name.downcase.start_with?(letter) }
   end
 
+  def self.search(word)
+  # returns an array of spells who's name or description contain a specific keyword
+    self.all.select { |spell| spell if spell.name.downcase.include?(word.downcase) || spell.description.downcase.include?(word.downcase) }
+  end
+
+  def self.find_by_name(name)
+  # returns a spell instance with specific name
+    self.all.detect { |spell| spell if spell.name == name }
+  end
+
   def self.request_info_by_spell(spell)
-    # adds additional information for a spell
-    if spell.url == nil || spell.name == ("Horcrux Curse") || spell.effect
+  # adds additional information for a spell
+    if spell.url == nil || spell.effect
       spell.list_additional_details
     else
       spell.add_details(SpellworkCli::Scraper.scrape_details(spell.url))
@@ -120,23 +130,17 @@ class SpellworkCli::Spell
     end
   end
 
-  def self.find_by_name(name)
-    # returns a spell instance with specific name
-    self.all.detect { |spell| spell if spell.name == name }
-  end
-
-  def self.search(word)
-    # returns an array of spells of a specific type
-    self.all.select { |spell| spell if spell.name.downcase.include?(word.downcase) || spell.description.downcase.include?(word.downcase) }
-  end
-
-  # def self.request_info_by_name(name)
-  #   # adds casting information for a spell with a given name & returns spell
-  #   requested_spell = self.find_by_name(name)
-  #   spell_url = requested_spell.url
-  # # NEED FIX IF NO URL AVAILABLE
-  #   SpellworkCli::Scraper.scrape_details(requested_spell, spell_url)
-  #   requested_spell
+  # def self.request_all
+  # # to test all 2nd level scraping
+  #   self.all.each.with_index do |spell, i|
+  #     if spell.url == nil || spell.effect
+  #       puts "#{i}. No url for #{spell.name}."
+  #     else
+  #       spell.add_details(SpellworkCli::Scraper.scrape_details(spell.url))
+  #       puts "#{i}. Added details to #{spell.name}."
+  #     end
+  #   end
+  #   "All 2nd level scraping passing!"
   # end
 
 end

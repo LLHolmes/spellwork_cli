@@ -99,10 +99,19 @@ class SpellworkCli::Scraper
 
     attributes = {}
 
-    doc.css('.pi-data').css('.pi-data-label').each.with_index do |element, i|
-      attributes[element.text.downcase.gsub(" ", "_")] = doc.css('.pi-data').css('.pi-data-value')[i].text.gsub(/\[.*\]/, "")
+    if doc.css('h2.pi-header')[0] != nil
+      doc.css('.pi-data').css('.pi-data-label').each.with_index do |element, i|
+        if element.text.downcase == "usage"
+          attributes["effect"] = doc.css('.pi-data').css('.pi-data-value')[i].text.gsub(/\[.*\]/, "")
+        elsif element.text.downcase == "owners"
+          attributes["creator"] = doc.css('.pi-data').css('.pi-data-value')[i].text.gsub(/\[.*\]/, "")
+        end
+      end
+    else
+      doc.css('.pi-data').css('.pi-data-label').each.with_index do |element, i|
+        attributes[element.text.downcase.gsub(" ", "_")] = doc.css('.pi-data').css('.pi-data-value')[i].text.gsub(/\[.*\]/, "")
+      end
     end
-
     attributes
   end
 
