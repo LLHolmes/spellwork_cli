@@ -6,7 +6,11 @@ class SpellworkCli::Spell
   def initialize(name, type, description, url)
     @name = name
     @type = classify_type(type, name)
-    @description = description
+    if description
+      @description = description
+    else
+      @description = "Details unknown"
+    end
     @url = url
     @@all << self
   end

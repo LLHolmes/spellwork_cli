@@ -146,7 +146,7 @@ class SpellworkCli::CLI
   def list_spells_of_a_type(type)
     @spells_by_type = SpellworkCli::Spell.find_by_type(type)
     puts "\nAll #{type.downcase} spells:"
-    @spells_by_type.each.with_index(1) { |spell, i| puts "#{i}. #{spell.name}" }
+    list_generic(@spells_by_type)
   end
 
   def choose_spell_from_type(type)
@@ -196,7 +196,11 @@ class SpellworkCli::CLI
 
   def list_spells_by_letter
     puts "\nAll spells that begin with the letter #{@input.upcase}:"
-    @spells_by_letter.each.with_index(1) { |spell, i| puts "#{i}. #{spell.name}" }
+    list_generic(@spells_by_letter)
+  end
+
+  def list_generic(spell_list)
+    spell_list.each.with_index(1) { |spell, i| puts "#{i}. #{spell.name}" }
   end
 
   def choose_spell_from_letter

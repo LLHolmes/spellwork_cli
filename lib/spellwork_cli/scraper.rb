@@ -23,6 +23,12 @@ class SpellworkCli::Scraper
         attributes = element.parent.next_element.css('dd')
       elsif element.parent.next_element.next_element.css('dd')[1]
         attributes = element.parent.next_element.next_element.css('dd')
+      elsif element.parent.next_element.css('tr')[1]
+        attributes = element.parent.next_element.css('tr')
+      elsif element.parent.next_element.next_element.css('tr')[1]
+        attributes = element.parent.next_element.next_element.css('tr')
+      elsif element.parent.next_element.next_element.css('tr')[1]
+        attributes = element.parent.next_element.next_element.next_element.css('tr')
       else
         attributes = element.parent.next_element.next_element.next_element.css('dd')
       end
