@@ -12,17 +12,22 @@ gem 'spellwork_cli'
 
 And then execute:
 
-    $ bundle
+```ruby
+$ bundle
+```
 
 Or install it yourself as:
-
-    $ gem install spellwork_cli
+```ruby
+$ gem install spellwork_cli
+```
 
 ## Usage
 
 Type the below and follow the on screen prompts.
 
-$ run-spellwork
+```ruby
+$ ./bin/run_spellwork
+```
 
 ## Development
 
