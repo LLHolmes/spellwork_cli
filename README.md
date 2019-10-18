@@ -1,6 +1,6 @@
 # SpellworkCli
 
-This Ruby Gem provides a CLI to view basic information on all known spells from the Harry Potter universe, from the Harry Potter Wiki on the [fandom website].(https://harrypotter.fandom.com/wiki/List_of_spells)
+This Ruby Gem provides a CLI to view basic information on all known spells from the Harry Potter universe, from the Harry Potter Wiki on the [fandom website](https://harrypotter.fandom.com/wiki/List_of_spells).
 
 ## Installation
 
