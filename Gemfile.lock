@@ -17,7 +17,7 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
     rainbow (3.0.0)
-    rake (10.5.0)
+    rake (13.0.1)
 
 PLATFORMS
   ruby
@@ -25,7 +25,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 2.0)
   pry
-  rake (~> 10.0)
+  rake (~> 13.0)
   spellwork_cli!
 
 BUNDLED WITH
